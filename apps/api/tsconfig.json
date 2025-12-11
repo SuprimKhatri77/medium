@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "esModuleInterop": true
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../../packages/trpc-server" },
+    { "path": "../../packages/auth" },
+    { "path": "../../packages/database" }
+  ]
+}

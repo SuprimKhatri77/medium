@@ -1,0 +1,38 @@
+{
+  "name": "medium",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "format": "prettier \"{apps,packages}/**/*.{ts,tsx,js,json}\" --ignore-path .gitignore",
+    "format:check": "pnpm format --check",
+    "format:write": "pnpm format --write",
+    "build:packages": "nx run-many --target=build --projects=@medium/types,@medium/database,@medium/auth,@medium/trpc-server,@medium/trpc-client",
+    "build:api": "pnpm build:packages && pnpm --filter @medium/api build",
+    "build:web": "pnpm build:packages && pnpm --filter @medium/web build",
+    "build:apps": "nx run-many --target=build --projects=@medium/api,@medium/web",
+    "build": "pnpm build:packages && pnpm build:apps",
+    "tsc": "pnpm exec nx run-many --target=tsc",
+    "lint": "pnpm exec nx run-many --target=lint",
+    "validate": "pnpm format:write && pnpm tsc && pnpm lint && pnpm build",
+    "prepare": "husky",
+    "dev": "nx run-many --target=dev --projects=@medium/types,@medium/core,@medium/trpc-server,@medium/api --parallel",
+    "start:api": "pnpm --filter @medium/api start",
+    "start:web": "pnpm --filter @medium/web start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.21.0",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "nx": "22.2.0",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

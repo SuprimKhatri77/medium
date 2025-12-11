@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "strict": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@medium/*": ["./packages/*/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

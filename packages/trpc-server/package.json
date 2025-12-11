@@ -1,0 +1,20 @@
+{
+  "name": "@medium/trpc-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": " tsc -b"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.21.0",
+  "dependencies": {
+    "@medium/auth": "workspace:*",
+    "@medium/database": "workspace:*",
+    "@medium/types": "workspace:*",
+    "@trpc/server": "^11.7.2"
+  }
+}
