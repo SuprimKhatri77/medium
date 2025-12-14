@@ -12,9 +12,11 @@
   "license": "ISC",
   "packageManager": "pnpm@10.21.0",
   "dependencies": {
-    "@medium/trpc-server": "workspace:*",
+    "@medium/database": "workspace:*",
     "@medium/types": "workspace:*",
-    "drizzle-orm": "^0.45.1",
     "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "drizzle-orm": "^0.45.1"
   }
 }

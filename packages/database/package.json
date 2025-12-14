@@ -5,7 +5,11 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": " tsc -b"
+    "build": " tsc -b",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio --config ./src/drizzle.config.ts",
+    "db:generate": "drizzle-kit generate --config ./src/drizzle.config.ts",
+    "db:migrate": "tsx ./src/migrate.ts"
   },
   "keywords": [],
   "author": "",

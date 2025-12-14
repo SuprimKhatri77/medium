@@ -7,7 +7,7 @@
     "format": "prettier \"{apps,packages}/**/*.{ts,tsx,js,json}\" --ignore-path .gitignore",
     "format:check": "pnpm format --check",
     "format:write": "pnpm format --write",
-    "build:packages": "nx run-many --target=build --projects=@medium/types,@medium/database,@medium/auth,@medium/trpc-server,@medium/trpc-client",
+    "build:packages": "nx run-many --target=build --projects=@medium/types,@medium/database,@medium/auth,@medium/auth-client,@medium/core,@medium/trpc-server,@medium/trpc-client",
     "build:api": "pnpm build:packages && pnpm --filter @medium/api build",
     "build:web": "pnpm build:packages && pnpm --filter @medium/web build",
     "build:apps": "nx run-many --target=build --projects=@medium/api,@medium/web",
