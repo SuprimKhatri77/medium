@@ -1,8 +1,9 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import type { Auth } from 'better-auth'
 import { db, schema } from '@medium/database'
 import { sendMail } from './send-mail'
+import { magicLink } from 'better-auth/plugins'
+import { getMagicLinkEmail } from './emails/magic-link'
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -268,6 +269,18 @@ The Connect Team
       })
     },
   },
+  socialProviders: {
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    },
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      prompt: 'select_account consent',
+      accessType: 'offline',
+    },
+  },
   advanced: {
     cookiePrefix: 'better-auth',
     useSecureCookies: process.env.NODE_ENV === 'production',
@@ -277,7 +290,22 @@ The Connect Team
       path: '/',
     },
   },
+
   trustedOrigins: ['http://localhost:5000', 'http://localhost:3000'],
-}) as Auth
+  plugins: [
+    magicLink({
+      sendMagicLink: async ({ email, token, url }, ctx) => {
+        const customMagicLinkUrl = `${process.env.FRONTEND_URL}/auth/magic-link/verify?token=${token}&callbackURL=/dashboard`
+
+        await sendMail({
+          to: email,
+          subject: 'Your secure login link',
+          text: `Click this link to sign in: ${customMagicLinkUrl}`,
+          html: getMagicLinkEmail(customMagicLinkUrl),
+        })
+      },
+    }),
+  ],
+})
 
 export type AUTH = typeof auth

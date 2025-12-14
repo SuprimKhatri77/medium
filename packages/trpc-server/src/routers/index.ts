@@ -1,9 +1,9 @@
 import { inferRouterOutputs } from '@trpc/server'
 import { router } from '../trpc'
-import { testRouter } from './test.router'
+import { authRouter } from './auth.router'
 
 export const appRouter = router({
-  test: testRouter,
+  auth: authRouter,
 })
 
 export type AppRouter = typeof appRouter

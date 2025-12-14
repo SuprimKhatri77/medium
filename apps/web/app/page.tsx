@@ -1,17 +1,9 @@
-'use client'
+export const dynamic = 'force-dynamic'
 
-import { trpcClient } from '@medium/trpc-client'
+import { Landing } from '@/modules/landing/landing'
+import { trpc } from '@medium/trpc-client'
 
-export default function Home() {
-  const { data, isPending } = trpcClient.test.testEndpoint.useQuery()
-
-  return isPending ? (
-    <div>
-      <h1>Fetching....</h1>
-    </div>
-  ) : (
-    <div>
-      <h1>{data?.message}</h1>
-    </div>
-  )
+export default async function Page() {
+  const result = await trpc.auth.getUserSession.query()
+  return <Landing session={result} />
 }

@@ -9,15 +9,9 @@
     "composite": true,
     "skipLibCheck": true,
     "incremental": true,
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
-    "preserveSymlinks": true
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"],
-  "references": [
-    { "path": "../../packages/auth" },
-    { "path": "../../packages/database" },
-    { "path": "../../packages/types" },
-    { "path": "../../packages/core" }
-  ]
+  "references": [{ "path": "../../packages/database" }]
 }

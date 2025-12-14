@@ -1,1 +1,1 @@
-// will export controllers from here for trpc-server
+export * from './controllers/index'
