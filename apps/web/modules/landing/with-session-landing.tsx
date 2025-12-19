@@ -1,5 +1,6 @@
 'use client'
 
+import Navbar from '@/components/Nav/Navbar'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { authClient } from '@medium/auth-client'
@@ -52,12 +53,15 @@ const Dashboard = ({ session }: Props) => {
     }
   }
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center gap-2">
-      <p>Hi, {session.user.name} from Dashboard.</p>
-      <Button onClick={handleLogout} disabled={isLoggingOut}>
-        {isLoggingOut ? <Spinner /> : 'Logout'}
-      </Button>
-    </div>
+    <>
+      <Navbar />
+      <div className="min-h-screen flex flex-col justify-center items-center gap-2">
+        <p>Hi, {session.user.name} from Dashboard.</p>
+        <Button onClick={handleLogout} disabled={isLoggingOut}>
+          {isLoggingOut ? <Spinner /> : 'Logout'}
+        </Button>
+      </div>
+    </>
   )
 }
 
