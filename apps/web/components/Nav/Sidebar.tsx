@@ -13,6 +13,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { NavItems } from './nav-types'
+import { motion } from 'motion/react'
 
 type Props = {
   item: NavItems
@@ -97,48 +98,66 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   ]
 
   return (
-    <div className="absolute inset-0 z-9 bg-gray-950/10 h-screen flex">
-      <div className="flex flex-col gap-8 w-60 h-screen px-6 py-2 bg-gray-50">
-        <div className="flex flex-row gap-4 w-full items-center">
-          <X
-            onClick={onClose}
-            className="text-gray-400 scale-90 hover:text-black"
-          />
-          <Image
-            src="/medium-logo.svg"
-            alt="medium-logo"
-            width={120}
-            height={50}
-          />
-        </div>
-        <nav className="flex flex-col gap-5">
-          {NAV_ITEMS.map((item) => (
-            <NavItemLink key={item.href} item={item} />
-          ))}
-        </nav>
-        <hr className="border-gray-200/60" />
-        <div className="flex flex-col gap-6">
-          {NAV_2Items.map((item) => (
-            <NavItemLink key={item.href} item={item} />
-          ))}
-          <div className="flex flex-row gap-4">
-            <PlusIcon width={40} className="text-gray-400" />
-            <div className="flex flex-col gap-2">
-              <p className="text-gray-500 text-sm font-semibold">
-                Find writers and publications to follow.
-              </p>
-              <Link
-                href={'/suggestions'}
-                className="text-gray-500 font-semibold text-sm hover:text-black underline"
-              >
-                See suggestions
-              </Link>
+    <>
+      <motion.div
+        transition={{ duration: 0.5 }}
+        exit={{ opacity: 0 }}
+        className="absolute w-full inset-0 bg-black/5 z-9 h-screen flex"
+      >
+        <motion.div
+          initial={{ x: -320 }}
+          animate={{ x: 0 }}
+          exit={{ x: -320 }}
+          transition={{
+            type: 'spring',
+            stiffness: 260,
+            damping: 28,
+          }}
+          className="flex flex-col gap-8 w-77 h-screen px-6 py-2 shadow-lg bg-white"
+        >
+          <div className="flex flex-row gap-4 w-full items-center">
+            <div>
+              <X
+                onClick={onClose}
+                className="text-gray-400 scale-90 hover:text-black"
+              />
+            </div>
+            <Image
+              src="/medium-logo.svg"
+              alt="medium-logo"
+              width={120}
+              height={50}
+            />
+          </div>
+          <nav className="flex flex-col gap-5">
+            {NAV_ITEMS.map((item) => (
+              <NavItemLink key={item.href} item={item} />
+            ))}
+          </nav>
+          <hr className="border-gray-200/60" />
+          <div className="flex flex-col gap-6">
+            {NAV_2Items.map((item) => (
+              <NavItemLink key={item.href} item={item} />
+            ))}
+            <div className="flex flex-row gap-4">
+              <PlusIcon width={40} className="text-gray-400" />
+              <div className="flex flex-col gap-2">
+                <p className="text-gray-500 text-sm font-semibold">
+                  Find writers and publications to follow.
+                </p>
+                <Link
+                  href={'/suggestions'}
+                  className="text-gray-500 font-semibold text-sm hover:text-black underline"
+                >
+                  See suggestions
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div></div>
-    </div>
+        </motion.div>
+        <div onClick={onClose} className="bg-transparent w-full"></div>
+      </motion.div>
+    </>
   )
 }
 
