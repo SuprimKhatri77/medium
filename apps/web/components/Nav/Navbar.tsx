@@ -36,4 +36,6 @@ const Navbar = () => {
   )
 }
 
+//bekjorjeio
+
 export default Navbar
