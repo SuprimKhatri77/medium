@@ -38,7 +38,7 @@ const NavItemLink = ({ item }: Props) => {
     >
       {/* Active bar */}
       <span
-        className={`absolute -left-6 w-1 h-full transition-colors ${
+        className={`absolute -left-5.5 w-px h-full transition-colors ${
           isActive ? 'bg-black' : 'bg-transparent'
         }`}
       />
