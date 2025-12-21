@@ -169,7 +169,7 @@ const Navbar = () => {
             />
             <Image src="/globe.svg" width={28} height={28} alt="user" />
             {islogButtonClicked && (
-              <div className="absolute bg-gray-50 shadow-md w-59 top-10 right-0 h-110">
+              <div className="absolute z-50 bg-white shadow-md w-59 top-10 right-0 h-110">
                 <div className="flex p-5 gap-8 flex-col">
                   <div>
                     <Link href={'/profile'} className="group flex gap-5">

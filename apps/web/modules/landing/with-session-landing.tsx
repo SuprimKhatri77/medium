@@ -1,5 +1,6 @@
 'use client'
 
+import RightSection from '@/components/Hero/RightSection'
 import Navbar from '@/components/Nav/Navbar'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
@@ -55,8 +56,9 @@ const Dashboard = ({ session }: Props) => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen flex flex-col justify-center items-center gap-2">
+      <div className="relative min-h-screen flex flex-col justify-center items-center gap-2">
         <p>Hi, {session.user.name} from Dashboard.</p>
+        <RightSection />
         <Button onClick={handleLogout} disabled={isLoggingOut}>
           {isLoggingOut ? <Spinner /> : 'Logout'}
         </Button>
