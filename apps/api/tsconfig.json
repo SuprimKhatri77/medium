@@ -1,0 +1,10 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "esModuleInterop": true
+  },
+  // "references": [{ "path": "../../packages/types" }],
+  "include": ["src"]
+}

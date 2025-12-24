@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/db/index.ts","./src/db/migrate.ts","./src/db/schema.ts","./src/db/schemas/user.schema.ts","./src/utils/auth.ts","./src/utils/send-mail.ts"],"version":"5.9.3"}
