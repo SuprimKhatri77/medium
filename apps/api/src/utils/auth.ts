@@ -1,22 +1,66 @@
-import { betterAuth } from "better-auth";
-import { db } from "../db";
-import * as schema from "../db/schema";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { betterAuth } from 'better-auth'
+import { magicLink } from 'better-auth/plugins'
+import { db } from '../db'
+import * as schema from '../db/schema'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { getMagicLinkEmail } from '../emails/send-magic-link'
+import { sendMail } from './send-mail'
 
+const trustedOrigins = [
+  'http://localhost:5000',
+  'http://localhost:3000',
+  // process.env.FRONTEND_URL || "https://medium.suprimkhatri.online",
+  // process.env.BACKEND_URL || "https://api.medium.suprimkhatri.online",
+  // process.env.NEXT_PUBLIC_API_URL || "https://api.medium.suprimkhatri.online",
+  // process.env.NEXT_PUBLIC_FRONTEND_URL || "https://medium.suprimkhatri.online",
+]
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: "pg",
+    provider: 'pg',
     schema,
   }),
+  baseURL:
+    process.env.NODE_ENV === 'production'
+      ? process.env.BETTER_AUTH_URL || process.env.BACKEND_URL
+      : 'http://localhost:5000',
+  trustedOrigins,
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
+  },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      prompt: 'select_account consent',
+      accessType: 'offline',
+    },
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+      prompt: 'select_account consent',
+    },
   },
 
   account: {
     accountLinking: {
       enabled: true,
-      trustedProviders: ["google", "github"],
+      trustedProviders: ['google', 'github'],
     },
   },
-});
+
+  plugins: [
+    magicLink({
+      sendMagicLink: async ({ email, token, url }, ctx) => {
+        const customMagicLinkUrl = `${process.env.FRONTEND_URL}/verify/magic-link?token=${token}`
+
+        await sendMail({
+          to: email,
+          subject: 'Your secure login link',
+          text: `Click this link to sign in: ${customMagicLinkUrl}`,
+          html: getMagicLinkEmail(customMagicLinkUrl),
+        })
+      },
+    }),
+  ],
+})

@@ -5,6 +5,6 @@
     "rootDir": "src",
     "esModuleInterop": true
   },
-  // "references": [{ "path": "../../packages/types" }],
+  "references": [{ "path": "../../packages/types" }],
   "include": ["src"]
 }
