@@ -7,7 +7,7 @@ import { getMagicLinkEmail } from '../emails/send-magic-link'
 import { sendMail } from './send-mail'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY as string)
 
 const frontendUrl =
   process.env.FRONTEND_URL || 'https://medium.suprimkhatri.online'
@@ -59,7 +59,7 @@ export const auth = betterAuth({
 
         if (process.env.NODE_ENV === 'production') {
           await resend.emails.send({
-            from: 'Medium <auth@medium.suprimkhatri.online>',
+            from: 'Medium <auth@suprimkhatri.online>',
             to: email,
             subject: 'Your secure authenticated link',
             html: getMagicLinkEmail(customMagicLinkUrl),
