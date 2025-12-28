@@ -1,7 +1,7 @@
 import { SelectTopics } from '@/modules/get-started/select-topics'
 import { API_URL } from '@/utils/base-url'
 import { getAllCookies } from '@/utils/cookies'
-import { UnserInterest } from '@repo/types'
+import { UserInterest } from '@repo/types'
 import { redirect } from 'next/navigation'
 
 export default async function Page() {
@@ -19,7 +19,7 @@ export default async function Page() {
     throw new Error('Failed to fetch user interests')
   }
 
-  const { interests } = (await response.json()) as UnserInterest
+  const { interests } = (await response.json()) as UserInterest
 
   console.log('user interests: ', interests)
 
