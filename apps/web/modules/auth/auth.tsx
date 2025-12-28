@@ -32,7 +32,8 @@ type Props = {
   authModalType: 'login' | 'signup'
   closeModal: (bool: boolean) => void
 }
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000'
+const FRONTEND_URL =
+  process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'
 export function AuthModal({ authModalType, closeModal }: Props) {
   const [authType, setAuthType] = useState<'signup' | 'login'>(authModalType)
   const [authMode, setAuthMode] = useState<'social' | 'email'>('social')
