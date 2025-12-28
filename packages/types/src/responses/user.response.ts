@@ -5,4 +5,4 @@ export const userInterestSchema = z.object({
   interests: z.array(z.enum(allTopics)),
 })
 
-export type UnserInterest = z.infer<typeof userInterestSchema>
+export type UserInterest = z.infer<typeof userInterestSchema>

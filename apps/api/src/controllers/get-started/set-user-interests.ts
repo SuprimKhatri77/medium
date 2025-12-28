@@ -3,7 +3,7 @@ import { Response } from 'express'
 import { setUserInterest } from '../../services/get-started/set-user-interests.service'
 import { AuthenticatedRequest } from '../../types/authenticated-request'
 
-export const SetUserInterest = async (
+export const SetUserInterestController = async (
   req: AuthenticatedRequest,
   res: Response<SetUserInterestsResponse>,
 ) => {

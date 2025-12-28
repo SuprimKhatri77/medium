@@ -5,7 +5,7 @@ export async function getAllCookies() {
   const allCookies = cookieStore
     .getAll()
     .map((cookie) => `${cookie.name}=${cookie.value}`)
-    .join(';')
+    .join('; ')
 
   return allCookies
 }

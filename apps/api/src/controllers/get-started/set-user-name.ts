@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { setUsername } from '../../services/get-started/set-user-name.service'
 import type { SetUsername, SetUsernameResponse } from '@repo/types'
 
-export async function SetUsername(
+export async function SetUsernameController(
   req: Request<{}, {}, SetUsername>,
   res: Response<SetUsernameResponse>,
 ) {

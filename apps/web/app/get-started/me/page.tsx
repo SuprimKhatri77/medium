@@ -1,4 +1,4 @@
-import SetUsername from '@/modules/get-started/set-user-name'
+import SetUsernamePage from '@/modules/get-started/set-user-name'
 import { getUserSession } from '@/utils/get-user-session'
 import { redirect } from 'next/navigation'
 
@@ -7,5 +7,5 @@ export default async function Page() {
 
   if (!session) redirect('/')
 
-  return <SetUsername />
+  return <SetUsernamePage />
 }

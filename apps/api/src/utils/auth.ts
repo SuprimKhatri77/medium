@@ -59,7 +59,7 @@ export const auth = betterAuth({
 
         if (process.env.NODE_ENV === 'production') {
           await resend.emails.send({
-            from: 'Medium <medium@noreply.com>',
+            from: 'Medium <auth@medium.suprimkhatri.online>',
             to: email,
             subject: 'Your secure authenticated link',
             html: getMagicLinkEmail(customMagicLinkUrl),

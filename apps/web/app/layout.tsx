@@ -1,22 +1,22 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import ReactQueryProvider from "@/components/providers/query-client";
-import { Toaster } from "sonner";
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
+import ReactQueryProvider from '@/components/providers/query-client'
+import { Toaster } from 'sonner'
 
 const inter = Inter({
-  subsets: ["latin"],
-});
+  subsets: ['latin'],
+})
 
 export const metadata: Metadata = {
-  title: "Medium",
-  description: "Let the world know your writing.",
-};
+  title: 'Medium',
+  description: 'Let the world know your writing.',
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en">
@@ -27,5 +27,5 @@ export default function RootLayout({
         </ReactQueryProvider>
       </body>
     </html>
-  );
+  )
 }

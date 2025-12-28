@@ -88,7 +88,9 @@ export const verification = pgTable(
 export const userInterests = pgTable(
   'user_interests',
   {
-    userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
+      .notNull(),
     topic: topics('topic').notNull(),
   },
   (table) => [

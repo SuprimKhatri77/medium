@@ -3,7 +3,7 @@ import { sessionMiddleware } from '../../middlewares/session-middleware'
 import { db } from '../../db'
 import { eq } from 'drizzle-orm'
 import { userInterests } from '../../db/schema'
-import { UnserInterest } from '@repo/types'
+import { UserInterest } from '@repo/types'
 import getStartedRouter from './get-started/get-started.route'
 
 const router: Router = Router()
@@ -13,7 +13,7 @@ router.use('/get-started', getStartedRouter)
 router.get(
   '/interests',
   sessionMiddleware,
-  async (req: Request, res: Response<UnserInterest>) => {
+  async (req: Request, res: Response<UserInterest>) => {
     if (!req.session) return res.sendStatus(401)
 
     const interests = await db.query.userInterests.findMany({

@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-export default function SetUsername() {
+export default function SetUsernamePage() {
   const router = useRouter()
   const [name, setName] = useState<string>('')
   const [error, setError] = useState<SetUsernameResponse['errors']>({})
