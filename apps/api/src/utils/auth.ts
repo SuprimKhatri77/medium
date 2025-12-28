@@ -20,17 +20,21 @@ const trustedOrigins = [
   frontendUrl,
   backendUrl,
 ]
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema,
   }),
+
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:5000',
   trustedOrigins,
+
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
   },
+
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -49,6 +53,20 @@ export const auth = betterAuth({
     accountLinking: {
       enabled: true,
       trustedProviders: ['google', 'github'],
+    },
+  },
+
+  advanced: {
+    useSecureCookies: process.env.NODE_ENV === 'production',
+    defaultCookieAttributes: {
+      sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'none',
+      httpOnly: true,
+      path: '/',
+    },
+
+    crossSubDomainCookies: {
+      enabled: process.env.NODE_ENV === 'production',
+      domain: 'suprimkhatri.online',
     },
   },
 

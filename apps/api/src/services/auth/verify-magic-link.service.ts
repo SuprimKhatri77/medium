@@ -32,6 +32,7 @@ export async function verifyMagicLink(
     })
 
     const getSetCookie = responseHeaders.get('set-cookie') || ''
+    console.log('cookie to set: ', getSetCookie)
 
     return {
       success: true,
