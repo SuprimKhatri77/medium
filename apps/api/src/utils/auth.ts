@@ -5,24 +5,27 @@ import * as schema from '../db/schema'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { getMagicLinkEmail } from '../emails/send-magic-link'
 import { sendMail } from './send-mail'
+import { Resend } from 'resend'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
+
+const frontendUrl =
+  process.env.FRONTEND_URL || 'https://medium.suprimkhatri.online'
+const backendUrl =
+  process.env.BACKEND_URL || 'https://api.medium.suprimkhatri.online'
 
 const trustedOrigins = [
   'http://localhost:5000',
   'http://localhost:3000',
-  // process.env.FRONTEND_URL || "https://medium.suprimkhatri.online",
-  // process.env.BACKEND_URL || "https://api.medium.suprimkhatri.online",
-  // process.env.NEXT_PUBLIC_API_URL || "https://api.medium.suprimkhatri.online",
-  // process.env.NEXT_PUBLIC_FRONTEND_URL || "https://medium.suprimkhatri.online",
+  frontendUrl,
+  backendUrl,
 ]
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema,
   }),
-  baseURL:
-    process.env.NODE_ENV === 'production'
-      ? process.env.BETTER_AUTH_URL || process.env.BACKEND_URL
-      : 'http://localhost:5000',
+  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:5000',
   trustedOrigins,
   emailAndPassword: {
     enabled: true,
@@ -54,13 +57,24 @@ export const auth = betterAuth({
       sendMagicLink: async ({ email, token, url }, ctx) => {
         const customMagicLinkUrl = `${process.env.FRONTEND_URL}/verify/magic-link?token=${token}`
 
-        await sendMail({
-          to: email,
-          subject: 'Your secure login link',
-          text: `Click this link to sign in: ${customMagicLinkUrl}`,
-          html: getMagicLinkEmail(customMagicLinkUrl),
-        })
+        if (process.env.NODE_ENV === 'production') {
+          await resend.emails.send({
+            from: 'Medium <medium@noreply.com>',
+            to: email,
+            subject: 'Your secure authenticated link',
+            html: getMagicLinkEmail(customMagicLinkUrl),
+          })
+        } else {
+          await sendMail({
+            to: email,
+            subject: 'Your secure login link',
+            text: `Click this link to sign in: ${customMagicLinkUrl}`,
+            html: getMagicLinkEmail(customMagicLinkUrl),
+          })
+        }
       },
     }),
   ],
 })
+
+export type Session = Awaited<ReturnType<typeof auth.api.getSession>>

@@ -75,13 +75,14 @@ export function AuthModal({ authModalType, closeModal }: Props) {
     setIsAuthenticatingSocial(true)
     console.log('provider: ', provider)
     try {
-      await authClient.signIn.social(
+      const { data } = await authClient.signIn.social(
         {
           provider,
           callbackURL: FRONTEND_URL,
           newUserCallbackURL: `${FRONTEND_URL}/get-started/me`,
           errorCallbackURL: `${FRONTEND_URL}/error`,
         },
+
         {
           onError: ({ error }) => {
             console.log('error: ', error)
@@ -89,6 +90,7 @@ export function AuthModal({ authModalType, closeModal }: Props) {
           },
         },
       )
+      console.log('data: ', data)
     } finally {
       setIsAuthenticatingSocial(false)
     }

@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@repo/*": ["../../packages/*/src"]
     }
   },
   "references": [{ "path": "../../packages/types" }],

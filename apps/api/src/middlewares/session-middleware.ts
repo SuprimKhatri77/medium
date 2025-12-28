@@ -7,7 +7,7 @@ export async function sessionMiddleware(
   res: Response,
   next: NextFunction,
 ) {
-  console.log('req headers: ', req.headers, req.header)
+  // console.log('req headers: ', req.headers, req.header)
   const session = await auth.api.getSession({
     headers: fromNodeHeaders(req.headers),
   })
@@ -15,6 +15,6 @@ export async function sessionMiddleware(
   if (session) {
     req.session = session
   }
-
+  console.log('session: ', session)
   next()
 }

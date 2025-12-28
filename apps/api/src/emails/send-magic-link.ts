@@ -107,7 +107,7 @@ export const getMagicLinkEmail = (magicLinkUrl: string): string => `
 
         <!-- Bottom Text -->
         <p style="margin: 32px 0 0 0; font-size: 12px; color: #6b7280; text-align: center;">
-          © ${new Date().getFullYear()} Your Company. All rights reserved.
+          © ${new Date().getFullYear()} Medium. All rights reserved.
         </p>
 
       </td>
