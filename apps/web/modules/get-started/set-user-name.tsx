@@ -31,7 +31,7 @@ export default function SetUsernamePage() {
     },
     onSuccess: (result) => {
       if (result.success) {
-        router.push('/')
+        router.push('/get-started/topics')
         reset()
       } else {
         toast.error(result.message)

@@ -7,7 +7,7 @@ import { getMagicLinkEmail } from '../emails/send-magic-link'
 import { sendMail } from './send-mail'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY as string)
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 const frontendUrl =
   process.env.FRONTEND_URL || 'https://medium.suprimkhatri.online'

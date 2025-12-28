@@ -7,6 +7,7 @@ export async function VerifyMagicLink(
   req: Request<{}, {}, VerifyMagicLink>,
   res: Response<VerifyMagicLinkResponse>,
 ) {
+  console.log('magic link token in controller: ', req.body.token)
   try {
     const result = await verifyMagicLink(req.body, fromNodeHeaders(req.headers))
     if (result.success && result.cookies) {

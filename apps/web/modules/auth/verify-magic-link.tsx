@@ -5,7 +5,7 @@ import { apiFetch } from '@/utils/api'
 import type { VerifyMagicLink, VerifyMagicLinkResponse } from '@repo/types'
 import { useMutation } from '@tanstack/react-query'
 import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
-// import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -14,7 +14,7 @@ type Props = {
 }
 
 export function VerifyMagicLink({ token }: Props) {
-  //   const router = useRouter();
+  const router = useRouter()
   //   const [error, setError] = useState<VerifyMagicLinkResponse["errors"]>({});
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [isVerified, setIsVerified] = useState<boolean>(false)
@@ -29,13 +29,14 @@ export function VerifyMagicLink({ token }: Props) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ data }),
+        body: JSON.stringify(data),
         credentials: 'include',
       })
     },
     onSuccess: (result) => {
       setIsVerified(true)
       toast.success(result.message || 'magic link verified')
+      router.replace('/')
       reset()
     },
     onError: (error) => {
