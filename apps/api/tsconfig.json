@@ -3,7 +3,11 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "paths": {
+      "@repo/*": ["../../packages/*/src"]
+    }
   },
   "references": [{ "path": "../../packages/types" }],
   "include": ["src"]

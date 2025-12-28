@@ -1,5 +1,5 @@
 {
-  "id": "7eb7f1fd-2dd7-426a-b25f-d94784a3a49f",
+  "id": "bf56f7bc-b2a5-4da4-bfe3-5fd6357f2572",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -238,7 +238,7 @@
         },
         "name": {
           "name": "name",
-          "type": "text",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true
         },
@@ -259,7 +259,8 @@
           "name": "image",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'https://22eogg5076.ufs.sh/f/Vz9Fn0Bzntsc7vtSzf6QSXkVg5py0uh7H832bEJCnsj6IYUx'"
         },
         "created_at": {
           "name": "created_at",
@@ -267,6 +268,32 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "pronouns": {
+          "name": "pronouns",
+          "type": "pronouns",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bio": {
+          "name": "bio",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "has_completed_onboarding": {
+          "name": "has_completed_onboarding",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         },
         "updated_at": {
           "name": "updated_at",
@@ -286,8 +313,79 @@
           "columns": [
             "email"
           ]
+        },
+        "user_username_unique": {
+          "name": "user_username_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
+          ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_interests": {
+      "name": "user_interests",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "topic": {
+          "name": "topic",
+          "type": "topics",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "topic_idx": {
+          "name": "topic_idx",
+          "columns": [
+            {
+              "expression": "topic",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "user_interests_user_id_user_id_fk": {
+          "name": "user_interests_user_id_user_id_fk",
+          "tableFrom": "user_interests",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "user_interests_user_id_topic_pk": {
+          "name": "user_interests_user_id_topic_pk",
+          "columns": [
+            "user_id",
+            "topic"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -360,7 +458,50 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.pronouns": {
+      "name": "pronouns",
+      "schema": "public",
+      "values": [
+        "he",
+        "she"
+      ]
+    },
+    "public.topics": {
+      "name": "topics",
+      "schema": "public",
+      "values": [
+        "python",
+        "software development",
+        "artificial intelligence",
+        "web development",
+        "programming",
+        "data science",
+        "technology",
+        "humor",
+        "deep learning",
+        "machine learning",
+        "marketing",
+        "blockchain",
+        "coding",
+        "react",
+        "work",
+        "society",
+        "lifestyle",
+        "web3",
+        "java",
+        "math",
+        "space",
+        "sports",
+        "media",
+        "docker",
+        "race",
+        "music",
+        "justice",
+        "gaming"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

@@ -1,12 +1,14 @@
-import { NextFunction, Request, Response } from 'express'
+import { Request, Response, NextFunction } from 'express'
+import { Session } from '../utils/auth'
 
-export async function requireSession(
+export function requireSession(
   req: Request,
   res: Response,
   next: NextFunction,
-) {
+): asserts req is Request & { session: NonNullable<Session> } {
   if (!req.session) {
-    return res.status(401).json({ error: { message: 'Unauthorized' } })
+    res.sendStatus(401)
+    return
   }
   next()
 }
