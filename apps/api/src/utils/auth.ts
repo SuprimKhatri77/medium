@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth'
-import { magicLink, username } from 'better-auth/plugins'
+import { magicLink, oAuthProxy, username } from 'better-auth/plugins'
 import { db } from '../db'
 import * as schema from '../db/schema'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
@@ -14,6 +14,8 @@ const frontendUrl =
 const backendUrl =
   process.env.BACKEND_URL || 'https://api.medium.suprimkhatri.online'
 
+console.log('backend url: ', backendUrl)
+
 const trustedOrigins = [
   'http://localhost:5000',
   'http://localhost:3000',
@@ -27,7 +29,7 @@ export const auth = betterAuth({
     schema,
   }),
 
-  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:5000',
+  baseURL: backendUrl || 'http://localhost:5000',
   trustedOrigins,
   disablePaths: ['/is-username-available'],
 
@@ -42,11 +44,13 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
       prompt: 'select_account consent',
       accessType: 'offline',
+      redirectURI: `${backendUrl}/api/auth/callback/google`,
     },
     github: {
       clientId: process.env.GITHUB_CLIENT_ID as string,
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
       prompt: 'select_account consent',
+      redirectURI: `${backendUrl}/api/auth/callback/github`,
     },
   },
 
@@ -101,6 +105,11 @@ export const auth = betterAuth({
       usernameValidator: (username) => {
         return /^[a-zA-Z0-9._-]+$/.test(username)
       },
+    }),
+
+    oAuthProxy({
+      currentURL: backendUrl,
+      productionURL: frontendUrl,
     }),
   ],
 })
