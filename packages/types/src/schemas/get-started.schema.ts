@@ -2,7 +2,7 @@ import z from 'zod'
 import { allTopics } from '../utils/topic'
 
 export const setUsernameSchema = z.object({
-  name: z.string().min(1).max(50),
+  name: z.string().min(3).max(50),
 })
 
 export const setUserInterestsSchema = z.object({

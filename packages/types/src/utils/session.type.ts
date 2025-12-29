@@ -17,5 +17,7 @@ export type SessionType = {
     emailVerified: boolean
     name: string
     image?: string | null | undefined
+    username?: string | null | undefined
+    displayUsername?: string | null | undefined
   }
 } | null

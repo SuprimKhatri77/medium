@@ -36,7 +36,7 @@ export function VerifyMagicLink({ token }: Props) {
     onSuccess: (result) => {
       setIsVerified(true)
       toast.success(result.message || 'magic link verified')
-      router.replace('/')
+      router.replace('/get-started/me')
       reset()
     },
     onError: (error) => {

@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth'
-import { magicLink } from 'better-auth/plugins'
+import { magicLink, username } from 'better-auth/plugins'
 import { db } from '../db'
 import * as schema from '../db/schema'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
@@ -29,6 +29,7 @@ export const auth = betterAuth({
 
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:5000',
   trustedOrigins,
+  disablePaths: ['/is-username-available'],
 
   emailAndPassword: {
     enabled: true,
@@ -59,7 +60,7 @@ export const auth = betterAuth({
   advanced: {
     useSecureCookies: process.env.NODE_ENV === 'production',
     defaultCookieAttributes: {
-      sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'none',
+      sameSite: 'lax',
       httpOnly: true,
       path: '/',
     },
@@ -72,6 +73,7 @@ export const auth = betterAuth({
 
   plugins: [
     magicLink({
+      expiresIn: 300,
       sendMagicLink: async ({ email, token, url }, ctx) => {
         const customMagicLinkUrl = `${process.env.FRONTEND_URL}/verify/magic-link?token=${token}`
 
@@ -90,6 +92,14 @@ export const auth = betterAuth({
             html: getMagicLinkEmail(customMagicLinkUrl),
           })
         }
+      },
+    }),
+
+    username({
+      minUsernameLength: 3,
+      maxUsernameLength: 30,
+      usernameValidator: (username) => {
+        return /^[a-zA-Z0-9._-]+$/.test(username)
       },
     }),
   ],

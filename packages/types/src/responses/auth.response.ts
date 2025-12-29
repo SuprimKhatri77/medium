@@ -27,6 +27,7 @@ export const verifyMagicLinkResponseSchema = z.object({
         .optional(),
     })
     .optional(),
+  redirectTo: z.string().optional(),
 })
 
 export type VerifyMagicLinkResponse = z.infer<

@@ -1,12 +1,5 @@
-import { allTopics } from '@repo/types'
 import { relations } from 'drizzle-orm'
-import { primaryKey } from 'drizzle-orm/pg-core'
-import { pgEnum } from 'drizzle-orm/pg-core'
-import { varchar } from 'drizzle-orm/pg-core'
 import { pgTable, text, timestamp, boolean, index } from 'drizzle-orm/pg-core'
-
-export const pronounsEnum = pgEnum('pronouns', ['he', 'she'])
-export const topics = pgEnum('topics', allTopics)
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -21,9 +14,6 @@ export const user = pgTable('user', {
     .notNull(),
   username: text('username').unique(),
   displayUsername: text('display_username'),
-  pronouns: pronounsEnum('pronouns'),
-  bio: varchar('bio', { length: 160 }),
-  hasCompletedOnboarding: boolean('has_completed_onboarding').default(false),
 })
 
 export const session = pgTable(
@@ -85,24 +75,9 @@ export const verification = pgTable(
   (table) => [index('verification_identifier_idx').on(table.identifier)],
 )
 
-export const userInterests = pgTable(
-  'user_interests',
-  {
-    userId: text('user_id')
-      .references(() => user.id, { onDelete: 'cascade' })
-      .notNull(),
-    topic: topics('topic').notNull(),
-  },
-  (table) => [
-    index('topic_idx').on(table.topic),
-    primaryKey({ columns: [table.userId, table.topic] }),
-  ],
-)
-
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
-  interests: many(userInterests),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -115,13 +90,6 @@ export const sessionRelations = relations(session, ({ one }) => ({
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
-    references: [user.id],
-  }),
-}))
-
-export const userInterestsRelations = relations(userInterests, ({ one }) => ({
-  user: one(user, {
-    fields: [userInterests.userId],
     references: [user.id],
   }),
 }))

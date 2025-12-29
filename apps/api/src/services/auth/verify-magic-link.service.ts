@@ -23,21 +23,28 @@ export async function verifyMagicLink(
       return { success: false, message: 'Token expired.' }
     }
 
-    const { headers: responseHeaders } = await auth.api.magicLinkVerify({
-      query: {
-        ...input,
-      },
-      headers,
-      returnHeaders: true,
-    })
+    const { response, headers: responseHeaders } =
+      await auth.api.magicLinkVerify({
+        query: {
+          ...input,
+        },
+        headers,
+        returnHeaders: true,
+      })
+    console.log('response: ', response)
 
     const getSetCookie = responseHeaders.get('set-cookie') || ''
     console.log('cookie to set: ', getSetCookie)
+
+    const isNewUser =
+      response &&
+      Date.now() - new Date(response.user.createdAt).getTime() < 60000
 
     return {
       success: true,
       message: 'Magic link verified.',
       cookies: getSetCookie,
+      redirectTo: isNewUser ? '/get-started/me' : '/',
     }
   } catch (error) {
     console.log('error: ', error)

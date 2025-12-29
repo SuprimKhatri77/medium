@@ -35,7 +35,7 @@ export const getMagicLinkEmail = (magicLinkUrl: string): string => `
                   Welcome back! Click the button below to securely access your account.
                 </p>
                 <p style="margin: 0; font-size: 14px; color: #6b7280; line-height: 1.5;">
-                  This magic link will expire in <span style="font-weight: 600; color: #1f2937;">15 minutes</span> for your security.
+                  This magic link will expire in <span style="font-weight: 600; color: #1f2937;">5 minutes</span> for your security.
                 </p>
               </div>
 
