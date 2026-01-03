@@ -1,0 +1,38 @@
+{
+  "name": "@repo/trpc-server",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "development": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@repo/auth": "workspace:^",
+    "@repo/contracts": "workspace:^",
+    "@repo/core": "workspace:^",
+    "@repo/database": "workspace:^",
+    "@repo/types": "workspace:^",
+    "@trpc/server": "^11.8.1",
+    "@types/express": "^5.0.6",
+    "superjson": "^2.2.6",
+    "zod": "^4.3.2"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:^",
+    "typescript": "^5.9.3"
+  }
+}

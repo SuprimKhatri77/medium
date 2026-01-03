@@ -1,0 +1,5 @@
+export { auth } from './utils/auth'
+export { generateUsername } from './utils/generate-user-name'
+export type { Session, AUTH } from './utils/auth'
+export { toNodeHandler, fromNodeHeaders } from 'better-auth/node'
+export { APIError } from 'better-auth/api'

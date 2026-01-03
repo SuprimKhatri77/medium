@@ -1,0 +1,32 @@
+{
+  "name": "@repo/core",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "development": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:^"
+  },
+  "dependencies": {
+    "@repo/auth": "workspace:^",
+    "@repo/contracts": "workspace:^",
+    "@repo/database": "workspace:^",
+    "@repo/types": "workspace:^"
+  }
+}

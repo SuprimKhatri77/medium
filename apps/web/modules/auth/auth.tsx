@@ -1,0 +1,463 @@
+'use client'
+
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  FieldSeparator,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '../../components/ui/tabs'
+import { ArrowLeft, MailIcon, X } from 'lucide-react'
+import { useState } from 'react'
+
+import { SendMagicLinkResponse } from '@repo/contracts'
+import { toast } from 'sonner'
+import { Spinner } from '../../components/ui/spinner'
+import { authClient } from '@repo/auth-client'
+import { trpcClient } from '@repo/trpc-client'
+import { getFieldErrors } from '@/utils/trpc-error'
+
+type Props = {
+  authModalType: 'login' | 'signup'
+  closeModal: (bool: boolean) => void
+}
+
+const FRONTEND_URL =
+  process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'
+
+export function AuthModal({ authModalType, closeModal }: Props) {
+  const [authType, setAuthType] = useState<'signup' | 'login'>(authModalType)
+  const [authMode, setAuthMode] = useState<'social' | 'email'>('social')
+  const [email, setEmail] = useState<string>('')
+  const [errors, setErrors] = useState<SendMagicLinkResponse['errors']>()
+  const [isAuthenticatingSocial, setIsAuthenticatingSocial] =
+    useState<boolean>(false)
+  const [provider, setProvider] = useState<'google' | 'github' | null>(null)
+
+  const { mutate, isPending, reset } =
+    trpcClient.auth.sendMagicLink.useMutation({
+      onSuccess: (result) => {
+        setEmail('')
+        toast.success(result.message)
+        reset()
+      },
+      onError: (error) => {
+        if (error.data?.code === 'BAD_REQUEST') {
+          const fieldError =
+            getFieldErrors<SendMagicLinkResponse['errors']>(error)
+          setErrors(fieldError)
+          toast.error('validation failed.')
+        } else {
+          toast.error(error.message || 'Something went wrong.')
+        }
+        reset()
+      },
+    })
+
+  const handleSocialAuth = async (provider: 'google' | 'github') => {
+    setIsAuthenticatingSocial(true)
+    console.log('provider: ', provider)
+    try {
+      const { data } = await authClient.signIn.social(
+        {
+          provider,
+          callbackURL: FRONTEND_URL,
+          newUserCallbackURL: `${FRONTEND_URL}/get-started/me`,
+          errorCallbackURL: `${FRONTEND_URL}/error`,
+        },
+        {
+          onError: ({ error }) => {
+            console.log('error: ', error)
+            toast.error(error.message)
+          },
+        },
+      )
+      console.log('data: ', data)
+    } finally {
+      setIsAuthenticatingSocial(false)
+    }
+  }
+
+  return (
+    <div
+      inert={isPending || isAuthenticatingSocial}
+      className="flex  flex-col gap-6"
+    >
+      <Tabs
+        value={authType}
+        onValueChange={(v) => setAuthType(v as 'login' | 'signup')}
+      >
+        <TabsList className="grid w-full grid-cols-2 bg-white border-2 border-black p-1 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <TabsTrigger
+            value="login"
+            className="data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-none rounded-lg font-semibold transition-all"
+          >
+            Login
+          </TabsTrigger>
+          <TabsTrigger
+            value="signup"
+            className="data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-none rounded-lg font-semibold transition-all"
+          >
+            Signup
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="login" className="mt-6">
+          <Card className="border-2 border-black rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+            <CardHeader className="bg-white border-b-2 border-black">
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-2xl font-bold mb-2">
+                    Sign in to your account
+                  </CardTitle>
+                  <CardDescription className="text-base">
+                    Welcome back! Please sign in to continue.
+                  </CardDescription>
+                </div>
+                {authMode === 'email' ? (
+                  <Button
+                    onClick={() => setAuthMode('social')}
+                    variant="ghost"
+                    className="hover:bg-gray-100 rounded-lg"
+                    size="sm"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => closeModal?.(false)}
+                    variant="ghost"
+                    className="hover:bg-gray-100 rounded-lg"
+                    size="sm"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-6">
+              {authMode === 'social' ? (
+                <div className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-3">
+                    <Button
+                      onClick={() => {
+                        setProvider('google')
+                        handleSocialAuth('google')
+                      }}
+                      variant="outline"
+                      type="button"
+                      className="h-12 border-2 border-black hover:bg-black hover:text-white transition-all rounded-lg font-medium shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:shadow-none"
+                      disabled={isAuthenticatingSocial}
+                    >
+                      {isAuthenticatingSocial && provider === 'google' ? (
+                        <Spinner />
+                      ) : (
+                        <>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            className="w-5 h-5 mr-2"
+                          >
+                            <path
+                              d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                          Continue with Google
+                        </>
+                      )}
+                    </Button>
+
+                    <Button
+                      onClick={() => {
+                        setProvider('github')
+                        handleSocialAuth('github')
+                      }}
+                      variant="outline"
+                      type="button"
+                      className="h-12 border-2 border-black hover:bg-black hover:text-white transition-all rounded-lg font-medium shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:shadow-none"
+                      disabled={isAuthenticatingSocial && provider === 'github'}
+                    >
+                      {isAuthenticatingSocial && provider === 'github' ? (
+                        <Spinner />
+                      ) : (
+                        <>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            className="w-5 h-5 mr-2"
+                          >
+                            <path
+                              d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                              fill="currentColor"
+                            />
+                          </svg>
+                          Continue with GitHub
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  <FieldSeparator className="*:data-[slot=field-separator-content]:bg-white *:data-[slot=field-separator-content]:px-4 *:data-[slot=field-separator-content]:font-medium">
+                    or
+                  </FieldSeparator>
+
+                  <Button
+                    onClick={() => setAuthMode('email')}
+                    variant="outline"
+                    type="button"
+                    className="h-12 border-2 border-black hover:bg-black hover:text-white transition-all rounded-lg font-medium shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:shadow-none"
+                  >
+                    <MailIcon className="w-5 h-5 mr-2" />
+                    Continue with Email
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-5">
+                  <Field>
+                    <FieldLabel
+                      htmlFor="email"
+                      className="font-semibold text-base mb-2"
+                    >
+                      Email Address
+                    </FieldLabel>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="m@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="h-12 border-2 border-black rounded-lg focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all"
+                    />
+                    <FieldDescription className="mt-2 text-sm">
+                      A magic link will be sent to this email. Click the link to
+                      sign in.
+                    </FieldDescription>
+                    {errors?.properties?.email && (
+                      <FieldError className="mt-2">
+                        {errors.properties.email[0]}
+                      </FieldError>
+                    )}
+                  </Field>
+                  <Button
+                    disabled={isPending}
+                    onClick={() => mutate({ email })}
+                    className="h-12 bg-black text-white hover:bg-gray-800 rounded-lg font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all"
+                  >
+                    {isPending ? <Spinner /> : 'Send Magic Link'}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+
+            <CardFooter className="bg-gray-50 border-t-2 border-black p-6">
+              <FieldDescription className="text-center w-full text-sm">
+                Don&apos;t have an account?{' '}
+                <button
+                  className="text-black font-semibold hover:underline underline-offset-2 transition-all"
+                  onClick={() => {
+                    setAuthType((prev) =>
+                      prev === 'login' ? 'signup' : 'login',
+                    )
+                    setAuthMode('social')
+                    setEmail('')
+                  }}
+                >
+                  Sign up
+                </button>
+              </FieldDescription>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="signup" className="mt-6">
+          <Card className="border-2 border-black rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+            <CardHeader className="bg-white border-b-2 border-black">
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-2xl font-bold mb-2">
+                    Create your account
+                  </CardTitle>
+                  <CardDescription className="text-base">
+                    Join us today and get started.
+                  </CardDescription>
+                </div>
+                {authMode === 'email' ? (
+                  <Button
+                    onClick={() => setAuthMode('social')}
+                    variant="ghost"
+                    className="hover:bg-gray-100 rounded-lg"
+                    size="sm"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => closeModal?.(false)}
+                    variant="ghost"
+                    className="hover:bg-gray-100 rounded-lg"
+                    size="sm"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-6">
+              {authMode === 'social' ? (
+                <div className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-3">
+                    <Button
+                      onClick={() => {
+                        setProvider('google')
+                        handleSocialAuth('google')
+                      }}
+                      variant="outline"
+                      type="button"
+                      className="h-12 border-2 border-black hover:bg-black hover:text-white transition-all rounded-lg font-medium shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:shadow-none"
+                      disabled={isAuthenticatingSocial && provider === 'google'}
+                    >
+                      {isAuthenticatingSocial && provider === 'google' ? (
+                        <Spinner />
+                      ) : (
+                        <>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            className="w-5 h-5 mr-2"
+                          >
+                            <path
+                              d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                          Continue with Google
+                        </>
+                      )}
+                    </Button>
+
+                    <Button
+                      onClick={() => {
+                        setProvider('github')
+                        handleSocialAuth('github')
+                      }}
+                      variant="outline"
+                      type="button"
+                      className="h-12 border-2 border-black hover:bg-black hover:text-white transition-all rounded-lg font-medium shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:shadow-none"
+                      disabled={isAuthenticatingSocial && provider === 'github'}
+                    >
+                      {isAuthenticatingSocial && provider === 'github' ? (
+                        <Spinner />
+                      ) : (
+                        <>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            className="w-5 h-5 mr-2"
+                          >
+                            <path
+                              d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                              fill="currentColor"
+                            />
+                          </svg>
+                          Continue with GitHub
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  <FieldSeparator className="*:data-[slot=field-separator-content]:bg-white *:data-[slot=field-separator-content]:px-4 *:data-[slot=field-separator-content]:font-medium">
+                    or
+                  </FieldSeparator>
+
+                  <Button
+                    onClick={() => setAuthMode('email')}
+                    variant="outline"
+                    type="button"
+                    className="h-12 border-2 border-black hover:bg-black hover:text-white transition-all rounded-lg font-medium shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:shadow-none"
+                  >
+                    <MailIcon className="w-5 h-5 mr-2" />
+                    Continue with Email
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-5">
+                  <Field>
+                    <FieldLabel
+                      htmlFor="email"
+                      className="font-semibold text-base mb-2"
+                    >
+                      Email Address
+                    </FieldLabel>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="m@example.com"
+                      required
+                      className="h-12 border-2 border-black rounded-lg focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all"
+                    />
+                    <FieldDescription className="mt-2 text-sm">
+                      A magic link will be sent to this email. Click the link to
+                      sign in.
+                    </FieldDescription>
+                    {errors?.properties?.email && (
+                      <FieldError className="mt-2">
+                        {errors.properties.email[0]}
+                      </FieldError>
+                    )}
+                  </Field>
+                  <Button
+                    disabled={isPending}
+                    onClick={() => mutate({ email })}
+                    className="h-12 bg-black text-white hover:bg-gray-800 rounded-lg font-medium shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all"
+                  >
+                    {isPending ? <Spinner /> : 'Send Magic Link'}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+
+            <CardFooter className="bg-gray-50 border-t-2 border-black p-6">
+              <FieldDescription className="text-center w-full text-sm">
+                Already have an account?{' '}
+                <button
+                  className="text-black font-semibold hover:underline underline-offset-2 transition-all"
+                  onClick={() => {
+                    setAuthType((prev) =>
+                      prev === 'login' ? 'signup' : 'login',
+                    )
+                    setAuthMode('social')
+                    setEmail('')
+                  }}
+                >
+                  Login
+                </button>
+              </FieldDescription>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}

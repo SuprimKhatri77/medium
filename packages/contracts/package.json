@@ -1,0 +1,44 @@
+{
+  "name": "@repo/contracts",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "development": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./auth": {
+      "types": "./dist/auth/index.d.ts",
+      "development": "./src/auth/index.ts",
+      "default": "./dist/auth/index.js"
+    },
+    "./onboarding": {
+      "types": "./dist/onboarding/index.d.ts",
+      "development": "./src/onboarding/index.ts",
+      "default": "./dist/onboarding/index.js"
+    },
+    "./user": {
+      "types": "./dist/user/index.d.ts",
+      "development": "./src/user/index.ts",
+      "default": "./dist/user/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "zod": "^4.3.2"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:^"
+  }
+}
